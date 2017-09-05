@@ -1,0 +1,2 @@
+body { overflow: hidden;}
+#leaderboard { padding: 0; position: absolute; right: 10px; top: 10px; border: solid 1px black; width: 150px; height: 150px; background-color: white;}

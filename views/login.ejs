@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+  </head>
+    <title>Login</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel='stylesheet' href='login_style.css'>
+  </head>
+  <body>
+    <div id='content_area'>
+      <h1>Welcome to my <a href='http://agar.io/'>agar.io</a> replication.</h1>
+      <h5>Select a color, enter your name, and press start</h5>
+      <canvas id='color_picker' width='306' height='20'>Loading...</canvas>
+      <form method='post' role='form'>
+        <input placeholder='Player Name' class='form-control' id='name_input' name='player_name' required></input>
+        <input type='submit' value='Start' class='btn' id='start'></input>
+      </form>
+      <div id='footer'>
+        <h5>Project on github</h5>
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+    function colorPickerSetup() {
+      var c = document.getElementById('color_picker').getContext('2d');
+
+      for (var i=0; i<255; i+=5) {
+        c.beginPath();
+        c.fillStyle = 'rgb(255, '+i+', 0)';
+        c.fillRect(i/5, 0, 3, 20);
+      }
+
+      for (i=0; i<255; i+=5) {
+        c.beginPath();
+        c.fillStyle = 'rgb('+i+', 255, 0)';
+        c.fillRect((255-i)/5 + 51, 0, 3, 20);
+      }
+
+      for (i=0; i<255; i+=5) {
+        c.beginPath();
+        c.fillStyle = 'rgb(0, 255, '+i+')';
+        c.fillRect(i/5 + 102, 0, 3, 20);
+      }
+
+      for (i=0; i<255; i+=5) {
+        c.beginPath();
+        c.fillStyle = 'rgb(0, '+i+', 255)';
+        c.fillRect((255-i)/5 + 153, 0, 3, 20);
+      }
+
+      for (i=0; i<255; i+=5) {
+        c.beginPath();
+        c.fillStyle = 'rgb('+i+', 0, 255)';
+        c.fillRect(i/5 + 204, 0, 3, 20);
+      }
+
+      for (i=0; i<255; i+=5) {
+        c.beginPath();
+        c.fillStyle = 'rgb(255, 0, '+i+')';
+        c.fillRect((255-i)/5 + 255, 0, 3, 20);
+      }
+
+    }
+
+    colorPickerSetup();
+
+      $(function() {
+        var socket = io();
+
+        $('#color_picker').on('click', function(event) {
+          var c = document.getElementById('color_picker').getContext('2d');
+          var raw = c.getImageData(event.offsetX, event.offsetY, 1, 1).data;
+          var rgb = 'rgb('+raw[0]+', '+raw[1]+', '+raw[2]+')';
+          $('#start').css('background-color', rgb);
+        });
+
+        $('#start').on('click', function() {
+          socket.emit('new_player_name', $('#name_input').val());
+        });
+      });
+    </script>
+  </body>
+</html>
