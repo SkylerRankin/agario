@@ -4,6 +4,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var ejs = require('ejs');
+var url = require('url');
 
 
 var player = require('./player.js')
@@ -39,19 +40,21 @@ app.set('views', __dirname+'/views');
 app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname+'/views'));
+
 app.use(body_parser.urlencoded({extended: false}));
+app.use(body_parser.json());
 
 app.get('/', function(req, res) {
   res.render('login');
 });
 
 app.get('/agario', function(req, res) {
-  console.log(req.body.player_name);
   res.render('game');
 });
 
 app.post('/', function(req, res) {
-  res.redirect('/agario');
+  var query = '/agario?n='+encodeURIComponent(req.body.name)+'&c='+encodeURIComponent(req.body.color);
+  res.redirect(query);
 });
 
 io.on('connection', function(socket) {
@@ -61,8 +64,15 @@ io.on('connection', function(socket) {
     return;
   }
 
-  console.log('new player joined');
-  players.push(new player(socket.id, Math.floor(Math.random()*150)+100));
+  var query = url.parse(socket.handshake.headers.referer).query;
+  var decoded = decodeURIComponent(query);
+  var a = decoded.indexOf('&c=');
+  var name = decoded.substring(2, a);
+  var color = decoded.substring(a+3, decoded.length);
+
+  console.log('new player '+name+' joined');
+
+  players.push(new player(socket.id, name, color, Math.floor(Math.random()*150)+100));
   clients.push(socket.id);
 
   socket.on('disconnect', function() {
