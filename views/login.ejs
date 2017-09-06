@@ -8,15 +8,16 @@
   </head>
   <body>
     <div id='content_area'>
-      <h1>Welcome to my <a href='http://agar.io/'>agar.io</a> replication.</h1>
+      <h1>Welcome to my <a href='http://agar.io/' target='_blank'>agar.io</a> replica.</h1>
       <h5>Select a color, enter your name, and press start</h5>
       <canvas id='color_picker' width='306' height='20'>Loading...</canvas>
       <form method='post' role='form'>
-        <input placeholder='Player Name' class='form-control' id='name_input' name='player_name' required></input>
-        <input type='submit' value='Start' class='btn' id='start'></input>
+        <input placeholder='Player Name' class='form-control' id='name_input' name='name' required>
+        <input type='submit' value='Start' class='btn' id='start'>
+        <input style='display: none' id='color_holder' name='color'>
       </form>
       <div id='footer'>
-        <h5>Project on github</h5>
+        <h5>Project on <a href='https://github.com/SkylerRankin/agario' target='_blank'>github</a></h5>
       </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
@@ -67,12 +68,13 @@
 
       $(function() {
         var socket = io();
-
+        $('#color_holder').val('rgb(0, 0, 255)');
         $('#color_picker').on('click', function(event) {
           var c = document.getElementById('color_picker').getContext('2d');
           var raw = c.getImageData(event.offsetX, event.offsetY, 1, 1).data;
           var rgb = 'rgb('+raw[0]+', '+raw[1]+', '+raw[2]+')';
           $('#start').css('background-color', rgb);
+          $('#color_holder').val(rgb);
         });
 
         $('#start').on('click', function() {

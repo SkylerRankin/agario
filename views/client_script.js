@@ -31,7 +31,7 @@ $(function() {
       ctx.lineTo(width - focus.x, i - focus.y);
     }
     ctx.stroke();
-  };  
+  };
 
   socket.on('update', function(data) {
     //console.log('update call received');
@@ -53,9 +53,10 @@ $(function() {
         ctx.fill();
       });
       data.players.forEach(function(player) {
+        ctx.fillStyle = player.color;
         ctx.beginPath();
         ctx.arc(player.x - absolute_focus.x + (width/2), player.y - absolute_focus.y + (height/2), player.size, 0, 2*Math.PI);
-        ctx.stroke();
+        ctx.fill();
       });
     }
 
